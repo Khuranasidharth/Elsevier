@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Team Vibe Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #F4F6FB;
+    --surface:  #FFFFFF;
+    --border:   #E4E8F0;
+    --text:     #111827;
+    --muted:    #6B7280;
+    --subtle:   #9CA3AF;
+    --accent:   #4F46E5;
+    --accent-l: #EEF2FF;
+    --green:    #059669;
+    --green-l:  #ECFDF5;
+    --red:      #DC2626;
+    --red-l:    #FEF2F2;
+    --yellow:   #D97706;
+    --yellow-l: #FFFBEB;
+    --radius:   14px;
+    --shadow:   0 1px 4px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── PAGE WRAPPER ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 58px; position: sticky; top: 0; z-index: 20;
+  }
+  .topbar-brand { font-size: 15px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .topbar-brand span { font-weight: 400; color: var(--muted); font-size: 13px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .identity-chip {
+    display: flex; align-items: center; gap: 7px;
+    padding: 5px 12px; border-radius: 20px;
+    background: var(--accent-l); border: 1px solid #C7D2FE;
+    font-size: 12.5px; font-weight: 600; color: var(--accent); cursor: pointer;
+  }
+  .identity-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+
+  /* ── MAIN ── */
+  .main { max-width: 700px; margin: 0 auto; padding: 36px 20px 60px; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--subtle); margin-bottom: 10px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .card-head {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .card-sub   { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .card-body  { padding: 22px 24px; }
+
+  /* ── SURVEY LINK ROW ── */
+  .link-row { display: flex; gap: 10px; align-items: center; }
+  .link-pill {
+    flex: 1; padding: 10px 14px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; font-size: 13px; color: var(--muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .edit-row { margin-top: 12px; display: none; }
+  .edit-row input {
+    width: 100%; padding: 10px 14px; margin-bottom: 10px;
+    border: 1px solid var(--border); border-radius: 8px;
+    font-size: 13.5px; font-family: inherit; color: var(--text);
+    outline: none; background: var(--bg);
+  }
+  .edit-row input:focus { border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 3px var(--accent-l); }
+  .edit-actions { display: flex; gap: 8px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border);
+    background: var(--surface); color: var(--muted);
+    transition: all .15s; display: inline-flex; align-items: center; gap: 6px;
+    white-space: nowrap; font-family: inherit;
+  }
+  .btn:hover { border-color: #C5C9D6; color: var(--text); }
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-primary:hover { background: #4338CA; border-color: #4338CA; color: #fff; }
+  .btn-sm { padding: 6px 13px; font-size: 12px; }
+
+  /* ── TEAM LIST ── */
+  .member-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 24px; border-bottom: 1px solid var(--border);
+  }
+  .member-row:last-child { border-bottom: none; }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff;
+  }
+  .member-info { flex: 1; }
+  .member-name { font-size: 14px; font-weight: 500; }
+  .member-time { font-size: 12px; color: var(--subtle); margin-top: 2px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 11px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid;
+  }
+  .badge-green  { background: var(--green-l);  color: var(--green);  border-color: #A7F3D0; }
+  .badge-red    { background: var(--red-l);    color: var(--red);    border-color: #FECACA; }
+  .rate-pill {
+    font-size: 12px; font-weight: 700; padding: 4px 12px;
+    border-radius: 20px; border: 1px solid;
+  }
+
+  /* ── FEEDBACK FORM ── */
+  .fb-form { padding: 22px 24px; }
+  .fb-form textarea {
+    width: 100%; padding: 13px 15px; border: 1px solid var(--border);
+    border-radius: 10px; font-size: 13.5px; font-family: inherit;
+    color: var(--text); resize: none; outline: none; line-height: 1.65;
+    background: var(--bg); transition: border .15s, background .15s;
+  }
+  .fb-form textarea:focus { border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 3px var(--accent-l); }
+  .fb-form-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+  .anon-note { font-size: 12px; color: var(--subtle); display: flex; align-items: center; gap: 5px; }
+  .success-msg {
+    display: none; background: var(--green-l); border: 1px solid #A7F3D0;
+    border-radius: 10px; padding: 13px 16px; font-size: 13px; color: var(--green);
+    font-weight: 500; margin-top: 12px; align-items: center; gap: 8px;
+  }
+
+  /* ── MANAGER VIEW ── */
+  .mgr-banner {
+    padding: 11px 24px; background: #1E2D45; color: #93C5FD;
+    font-size: 12.5px; font-weight: 600; display: flex;
+    justify-content: space-between; align-items: center;
+  }
+  .mgr-banner button {
+    background: none; border: 1px solid #3B5268; color: #93C5FD;
+    border-radius: 6px; padding: 4px 12px; font-size: 12px;
+    cursor: pointer; font-family: inherit; font-weight: 600;
+  }
+  .fb-item {
+    padding: 18px 24px; border-bottom: 1px solid var(--border);
+  }
+  .fb-item:last-child { border-bottom: none; }
+  .fb-text { font-size: 14px; color: var(--text); line-height: 1.65; margin-bottom: 10px; }
+  .fb-meta { display: flex; align-items: center; justify-content: space-between; }
+  .fb-time { font-size: 12px; color: var(--subtle); }
+  .like-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border);
+    background: transparent; font-size: 12px; font-weight: 600;
+    color: var(--muted); cursor: pointer; transition: all .15s; font-family: inherit;
+  }
+  .like-btn:hover { border-color: #C7D2FE; background: var(--accent-l); color: var(--accent); }
+  .like-btn.liked  { border-color: var(--accent); background: var(--accent-l); color: var(--accent); }
+  .fb-empty { padding: 40px 24px; text-align: center; color: var(--subtle); font-size: 13px; }
+
+  /* ── MODALS ── */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.4); z-index: 50;
+    align-items: center; justify-content: center;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border-radius: 16px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.18);
+    width: 100%; max-width: 380px; margin: 20px;
+    animation: fadeUp .18s ease;
+  }
+  .modal-wide { max-width: 460px; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  .modal-head { padding: 22px 24px 16px; border-bottom: 1px solid var(--border); }
+  .modal-head h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .modal-head p  { font-size: 13px; color: var(--muted); }
+  .modal-body { padding: 20px 24px; }
+  .modal-foot { padding: 14px 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+
+  /* Name grid */
+  .name-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .name-opt {
+    display: flex; align-items: center; gap: 9px;
+    padding: 10px 13px; border: 1px solid var(--border);
+    border-radius: 9px; cursor: pointer; transition: all .12s;
+  }
+  .name-opt:hover   { border-color: #C7D2FE; background: var(--accent-l); }
+  .name-opt.selected { border-color: var(--accent); background: var(--accent-l); }
+  .name-opt .nom { font-size: 13px; font-weight: 500; }
+
+  /* PIN input */
+  .pin-wrap { display: flex; gap: 10px; justify-content: center; margin: 4px 0; }
+  .pin-box {
+    width: 52px; height: 56px; border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 24px; font-weight: 700; text-align: center; outline: none;
+    font-family: inherit; color: var(--text); background: var(--bg);
+    transition: border .15s; caret-color: var(--accent);
+  }
+  .pin-box:focus { border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 3px var(--accent-l); }
+  .pin-error { font-size: 12px; color: var(--red); text-align: center; margin-top: 10px; display: none; }
+
+  /* Toast */
+  #toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+    background: #111827; color: #fff; padding: 10px 22px;
+    border-radius: 9px; font-size: 13px; font-weight: 500;
+    z-index: 99; opacity: 0; transition: opacity .3s; pointer-events: none;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<div class="topbar">
+  <div class="topbar-brand">
+    Office Vibe Hub <span>/ Weekly Tracker</span>
+  </div>
+  <div class="topbar-right">
+    <div class="identity-chip" onclick="openIdOverlay(false)" id="identity-chip">
+      <span class="dot"></span>
+      <span id="identity-label">Set your name</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- Survey Link -->
+  <div class="section-label">Survey</div>
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-title">Officevibe Survey Link</div>
+        <div class="card-sub">Click to open and complete your weekly survey</div>
+      </div>
+      <button class="btn btn-sm" onclick="toggleEdit()">&#9999; Edit link</button>
+    </div>
+    <div class="card-body">
+      <div class="link-row">
+        <div class="link-pill" id="link-display">—</div>
+        <button class="btn btn-primary" onclick="clickSurvey()">Open Survey &rarr;</button>
+      </div>
+      <div class="edit-row" id="edit-row">
+        <input type="text" id="edit-input" placeholder="Paste new Officevibe survey URL here…"/>
+        <div class="edit-actions">
+          <button class="btn btn-primary" onclick="saveLink()">Save</button>
+          <button class="btn" onclick="toggleEdit()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Tracker -->
+  <div class="section-label">Team — This Week</div>
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Who has opened the survey</div>
+      <span class="rate-pill" id="rate-pill">—</span>
+    </div>
+    <div id="member-list"></div>
+  </div>
+
+  <!-- Anonymous Feedback -->
+  <div class="section-label">Feedback</div>
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-title">Anonymous Feedback</div>
+        <div class="card-sub">Share what's on your mind — only Sangeet can read responses</div>
+      </div>
+      <button class="btn btn-sm" onclick="openPinOverlay()">&#128272; Manager view</button>
+    </div>
+
+    <!-- Submit form -->
+    <div class="fb-form" id="fb-submit-section">
+      <textarea id="fb-text" rows="4" placeholder="What's not working? What would you like to change? Be honest — no one will know it's you."></textarea>
+      <div class="fb-form-footer">
+        <span class="anon-note">&#128274; Completely anonymous</span>
+        <button class="btn btn-primary" onclick="submitFeedback()">Submit</button>
+      </div>
+      <div class="success-msg" id="fb-success">
+        &#10003; Your feedback was submitted anonymously.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ── MANAGER VIEW PANEL (hidden, shown after PIN) ── -->
+<div id="mgr-panel" style="display:none">
+  <div class="mgr-banner">
+    &#128272; Manager View — Sangeet
+    <button onclick="lockManagerView()">Lock & Exit</button>
+  </div>
+  <div class="main" style="padding-top:24px">
+    <div class="section-label">All Anonymous Feedback</div>
+    <div class="card">
+      <div id="fb-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── NAME OVERLAY ── -->
+<div class="overlay" id="id-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>&#128075; Who are you?</h3>
+      <p>Select your name — remembered on this device.</p>
+    </div>
+    <div class="modal-body">
+      <div class="name-grid" id="name-grid"></div>
+    </div>
+    <div class="modal-foot">
+      <span style="font-size:12px;color:var(--subtle)">One-time setup</span>
+      <button class="btn btn-primary" id="id-confirm-btn" onclick="confirmIdentity()" disabled>That's me &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PIN OVERLAY ── -->
+<div class="overlay" id="pin-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>&#128272; Manager Access</h3>
+      <p>Enter your 4-digit PIN to view team feedback.</p>
+    </div>
+    <div class="modal-body">
+      <div class="pin-wrap">
+        <input class="pin-box" id="p0" maxlength="1" type="password" oninput="pinInput(0)" onkeydown="pinKey(event,0)"/>
+        <input class="pin-box" id="p1" maxlength="1" type="password" oninput="pinInput(1)" onkeydown="pinKey(event,1)"/>
+        <input class="pin-box" id="p2" maxlength="1" type="password" oninput="pinInput(2)" onkeydown="pinKey(event,2)"/>
+        <input class="pin-box" id="p3" maxlength="1" type="password" oninput="pinInput(3)" onkeydown="pinKey(event,3)"/>
+      </div>
+      <div class="pin-error" id="pin-error">Incorrect PIN. Please try again.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closePinOverlay()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitPin()">Unlock &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const TEAM       = ["Mayank","Aakanksha","Cerlin","Aarthi","Anjali","Venkat"];
+const COLORS     = ["#4F46E5","#059669","#D97706","#DC2626","#7C3AED","#0891B2"];
+const MANAGER_PIN = "2024";
+
+const avatarColor = n => COLORS[TEAM.indexOf(n) % COLORS.length] || "#6B7280";
+const initials    = n => n.trim().split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+
+let surveyUrl = "";
+let myName    = "";
+let pickedName = "";
+let launchAfterId = false;
+
+// ── STORAGE ───────────────────────────────────────────────────────
+function load() {
+  surveyUrl = localStorage.getItem("vibe_url") ||
+    "https://activities.officevibe.workleap.com/survey?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3VzZXJkYXRhL29yZ2FuaXNhdGlvbmlkIjoiMzBjMDk1NjEtNmVlNC00ZWJkLTk5ZTQtMDZlYTk0MmRhZjkyIiwibmFtZWlkIjoiNWZmNGFlNjItMzE1Mi00MWMyLWE0ZjgtYjIzY2I4Y2E0NWJiIiwibmJmIjoxNzg1OTI3Njg2LCJleHAiOjE3ODYwMTQwODYsImlhdCI6MTc4NTkyNzY4NiwiaXNzIjoib2ZmaWNldmliZS5jb20iLCJhdWQiOiJBY3Rpdml0aWVzIn0.98z9627V4-rp1CaV6kLljcx9gBJpKhGDjGfX2S0TmNg";
+  myName = localStorage.getItem("vibe_my_name") || "";
+}
+
+function weekKey() {
+  const d = new Date(), jan1 = new Date(d.getFullYear(),0,1);
+  const w = Math.ceil(((d-jan1)/86400000 + jan1.getDay()+1)/7);
+  return d.getFullYear()+"-W"+w;
+}
+function getClicks()       { return JSON.parse(localStorage.getItem("vibe_clicks_"+weekKey())||"{}"); }
+function recordClick(name) {
+  const d = getClicks();
+  d[name] = d[name] || new Date().toISOString();
+  localStorage.setItem("vibe_clicks_"+weekKey(), JSON.stringify(d));
+}
+function getFeedback()     { return JSON.parse(localStorage.getItem("vibe_feedback")||"[]"); }
+function getLikes()        { return JSON.parse(localStorage.getItem("vibe_likes")||"{}"); }
+function getMyLikes()      { return JSON.parse(localStorage.getItem("vibe_my_likes")||"{}"); }
+
+// ── RENDER ────────────────────────────────────────────────────────
+function render() {
+  // Link
+  const disp = document.getElementById("link-display");
+  try { const u = new URL(surveyUrl); disp.textContent = u.hostname + "…"; }
+  catch { disp.textContent = surveyUrl || "No link set yet"; }
+
+  // Team
+  const clicks = getClicks();
+  const count  = TEAM.filter(n => clicks[n]).length;
+  const pill   = document.getElementById("rate-pill");
+  pill.textContent   = `${count} / ${TEAM.length} opened`;
+  pill.style.background  = count===TEAM.length?"#ECFDF5":count>0?"#FFFBEB":"#FEF2F2";
+  pill.style.color       = count===TEAM.length?"#059669":count>0?"#D97706":"#DC2626";
+  pill.style.borderColor = count===TEAM.length?"#A7F3D0":count>0?"#FDE68A":"#FECACA";
+
+  document.getElementById("member-list").innerHTML = TEAM.map(name => {
+    const ts = clicks[name];
+    const time = ts ? new Date(ts).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}) : null;
+    return `<div class="member-row">
+      <div class="avatar" style="background:${avatarColor(name)}">${initials(name)}</div>
+      <div class="member-info">
+        <div class="member-name">${name}</div>
+        <div class="member-time">${time ? "Opened at "+time : "Not opened yet"}</div>
+      </div>
+      <span class="badge ${ts?"badge-green":"badge-red"}">${ts?"&#10003; Opened":"&#9203; Pending"}</span>
+    </div>`;
+  }).join("");
+
+  // Identity chip
+  document.getElementById("identity-label").textContent = myName || "Set your name";
+}
+
+// ── SURVEY ────────────────────────────────────────────────────────
+function clickSurvey() {
+  if (!myName) { launchAfterId = true; openIdOverlay(false); return; }
+  recordClick(myName);
+  window.open(surveyUrl, "_blank");
+  render();
+  toast("&#10003; Marked as opened");
+}
+
+// ── EDIT LINK ─────────────────────────────────────────────────────
+function toggleEdit() {
+  const row = document.getElementById("edit-row");
+  const open = row.style.display === "block";
+  row.style.display = open ? "none" : "block";
+  if (!open) { document.getElementById("edit-input").value = surveyUrl; document.getElementById("edit-input").focus(); }
+}
+function saveLink() {
+  const v = document.getElementById("edit-input").value.trim();
+  if (!v) return;
+  surveyUrl = v;
+  localStorage.setItem("vibe_url", surveyUrl);
+  document.getElementById("edit-row").style.display = "none";
+  render(); toast("&#10003; Survey link updated");
+}
+
+// ── IDENTITY ──────────────────────────────────────────────────────
+function openIdOverlay(switching) {
+  pickedName = "";
+  document.getElementById("id-confirm-btn").disabled = true;
+  document.getElementById("name-grid").innerHTML = TEAM.map(name => `
+    <div class="name-opt" onclick="pickName('${name}',this)">
+      <div class="avatar" style="background:${avatarColor(name)};width:30px;height:30px;font-size:11px">${initials(name)}</div>
+      <span class="nom">${name}</span>
+    </div>`).join("");
+  document.getElementById("id-overlay").classList.add("open");
+}
+function pickName(name, el) {
+  pickedName = name;
+  document.querySelectorAll(".name-opt").forEach(e=>e.classList.remove("selected"));
+  el.classList.add("selected");
+  document.getElementById("id-confirm-btn").disabled = false;
+}
+function confirmIdentity() {
+  if (!pickedName) return;
+  myName = pickedName;
+  localStorage.setItem("vibe_my_name", myName);
+  document.getElementById("id-overlay").classList.remove("open");
+  render();
+  if (launchAfterId) {
+    launchAfterId = false;
+    recordClick(myName);
+    window.open(surveyUrl, "_blank");
+    render(); toast("&#10003; Marked as opened");
+  }
+}
+
+// ── FEEDBACK ──────────────────────────────────────────────────────
+function submitFeedback() {
+  const text = document.getElementById("fb-text").value.trim();
+  if (!text) return;
+  const all = getFeedback();
+  all.unshift({ id: Date.now(), text, date: new Date().toISOString() });
+  localStorage.setItem("vibe_feedback", JSON.stringify(all));
+  document.getElementById("fb-text").value = "";
+  const s = document.getElementById("fb-success");
+  s.style.display = "flex";
+  setTimeout(() => s.style.display = "none", 3500);
+}
+
+// ── MANAGER ───────────────────────────────────────────────────────
+function openPinOverlay() {
+  ["p0","p1","p2","p3"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("pin-error").style.display = "none";
+  document.getElementById("pin-overlay").classList.add("open");
+  setTimeout(() => document.getElementById("p0").focus(), 100);
+}
+function closePinOverlay() {
+  document.getElementById("pin-overlay").classList.remove("open");
+}
+function pinInput(i) {
+  const v = document.getElementById("p"+i).value;
+  if (v && i < 3) document.getElementById("p"+(i+1)).focus();
+  if (i === 3 && v) submitPin();
+}
+function pinKey(e, i) {
+  if (e.key === "Backspace" && !document.getElementById("p"+i).value && i > 0)
+    document.getElementById("p"+(i-1)).focus();
+}
+function submitPin() {
+  const pin = ["p0","p1","p2","p3"].map(id => document.getElementById(id).value).join("");
+  if (pin === MANAGER_PIN) {
+    document.getElementById("pin-overlay").classList.remove("open");
+    showManagerView();
+  } else {
+    document.getElementById("pin-error").style.display = "block";
+    ["p0","p1","p2","p3"].forEach(id => document.getElementById(id).value = "");
+    document.getElementById("p0").focus();
+  }
+}
+function showManagerView() {
+  document.querySelector(".main").style.display = "none";
+  document.getElementById("mgr-panel").style.display = "block";
+  renderFeedback();
+}
+function lockManagerView() {
+  document.getElementById("mgr-panel").style.display = "none";
+  document.querySelector(".main").style.display = "block";
+  toast("&#128274; Manager view locked");
+}
+
+function renderFeedback() {
+  const all     = getFeedback();
+  const likes   = getLikes();
+  const myLikes = getMyLikes();
+  const list    = document.getElementById("fb-list");
+
+  if (!all.length) {
+    list.innerHTML = `<div class="fb-empty">No feedback submitted yet.</div>`;
+    return;
+  }
+  list.innerHTML = all.map(f => {
+    const d = new Date(f.date);
+    const when = d.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})
+               + " · " + d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+    const lc    = likes[f.id] || 0;
+    const liked = !!myLikes[f.id];
+    return `<div class="fb-item">
+      <div class="fb-text">${f.text.replace(/</g,"&lt;")}</div>
+      <div class="fb-meta">
+        <span class="fb-time">&#128274; Anonymous · ${when}</span>
+        <button class="like-btn ${liked?"liked":""}" onclick="toggleLike(${f.id})">
+          &#128077; ${lc > 0 ? lc+" " : ""}${liked?"Agreed":"Agree"}
+        </button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function toggleLike(id) {
+  const likes = getLikes(), myLikes = getMyLikes(), key = String(id);
+  if (myLikes[key]) { likes[key] = Math.max(0,(likes[key]||1)-1); delete myLikes[key]; }
+  else              { likes[key] = (likes[key]||0)+1; myLikes[key] = true; }
+  localStorage.setItem("vibe_likes",   JSON.stringify(likes));
+  localStorage.setItem("vibe_my_likes",JSON.stringify(myLikes));
+  renderFeedback();
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.style.opacity = "1";
+  setTimeout(() => t.style.opacity = "0", 2500);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+load();
+render();
+if (!myName) setTimeout(() => openIdOverlay(false), 500);
+</script>
+</body>
+</html>
